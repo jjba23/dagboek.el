@@ -58,12 +58,21 @@
   :group 'dagboek)
 
 (defcustom dagboek-questions-template "
-describe day and/or momentary feelings
-discuss events/feelings/future plans
-conclude with final remark/plans/future course of action
-goals
-things that inspired you today
-  "
+** How was your day today ?
+
+/describe day and/or momentary feelings/
+
+** What inspired, affected or upset you ?
+
+/things that inspired you today/
+
+** Events, feelings, plans
+
+/discuss events/feelings/future plans/
+
+** Conclusions and goals
+
+/conclude with final remark/plans/future course of action/"
   "Template to be used for new dagboek entries."
   :type 'string
   :group 'dagboek)
@@ -82,55 +91,57 @@ things that inspired you today
           (caddr now)
           (cadddr now))))
 
-(defun dagboek-find-entry (entry-dir entry-file time)
+(defun dagboek-find-entry (time)
   "Find a certain dagboek entry."
-  (if (file-exists-p entry-file)
-      (progn
-        (message "opening today's dagboek entry...")
-        (find-file entry-file))
-    (progn
-      (message "creating today's dagboek entry...")
-      (make-directory entry-dir t)
-      (find-file entry-file)
-      (with-current-buffer (string-join (list (format-time-string dagboek-entry-format time) ".org") )
+  (let ((entry-dir (string-join
+                    (list dagboek-entry-location
+                          "/"
+                          (format-time-string dagboek-entry-destination time))))
+        (entry-file (string-join
+                     (list dagboek-entry-location
+                           (string-join (list (format-time-string dagboek-entry-destination time)
+                                              "/"
+                                              (format-time-string dagboek-entry-format time) ".org")))
+                     "/")))
+    (if (file-exists-p entry-file)
         (progn
-          (insert (format-time-string  dagboek-detailed-ts-format time))
-          (insert "\n")
-          (insert dagboek-questions-template)
-          ))))
-  )
+          (message "opening today's dagboek entry...")
+          (find-file entry-file))
+      (progn
+        (message "creating today's dagboek entry...")
+        (make-directory entry-dir t)
+        (find-file entry-file)
+        (with-current-buffer (string-join (list (format-time-string dagboek-entry-format time) ".org") )
+          (progn
+            (insert "#+title: ")
+            (insert (format-time-string  dagboek-detailed-ts-format time))
+            (insert "\n")
+            (insert dagboek-questions-template)
+            ))))))
 
 (defun dagboek-today-entry ()
   "Find today's dagboek entry."
   (interactive)
-  (let ((dagboek-today-dir (string-join
-                            (list dagboek-entry-location
-                                  "/"
-                                  (format-time-string dagboek-entry-destination))))
-        (dagboek-today-file (string-join
-                             (list dagboek-entry-location
-                                   (string-join (list (format-time-string dagboek-entry-destination (current-time))
-                                                      "/"
-                                                      (format-time-string dagboek-entry-format (current-time)) ".org")))
-                             "/")))
-    (dagboek-find-entry dagboek-today-dir dagboek-today-file (current-time))
-    ))
+  (dagboek-find-entry (current-time))
+  )
 
 (defun dagboek-yesterday-entry ()
-  "Find today's dagboek entry."
+  "Find yesterday's dagboek entry."
   (interactive)
-  (let ((dagboek-yesterday-dir (string-join
-                                (list dagboek-entry-location
-                                      "/"
-                                      (format-time-string dagboek-entry-destination (current-time-days- 1)))))
-        (dagboek-yesterday-file (string-join
-                                 (list dagboek-entry-location
-                                       (string-join (list (format-time-string dagboek-entry-destination)
-                                                          "/"
-                                                          (format-time-string dagboek-entry-format (current-time-days- 1)) ".org")))
-                                 "/")))
-    (dagboek-find-entry dagboek-yesterday-dir dagboek-yesterday-file (current-time-days- 1))
-    ))
+  (dagboek-find-entry (current-time-days- 1))
+  )
+
+(defun dagboek-day-before-yesterday-entry ()
+  "Find day before yesterday's dagboek entry."
+  (interactive)
+  (dagboek-find-entry (current-time-days- 2))
+  )
+
+(defun dagboek-tomorrow-entry ()
+  "Find tomorrow's dagboek entry."
+  (interactive)
+  (dagboek-find-entry (current-time-days+ 1))
+  )
 
 ;;; dagboek.el ends here
 
