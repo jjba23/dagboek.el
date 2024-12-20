@@ -1,0 +1,31 @@
+
+#+title: dagboek.el
+#+options: toc:nil num:nil
+
+/dagboek/ means diary in the Dutch language.
+
+** Introduction
+
+~dagboek.el~ is an Emacs package that allows you to effectively and simply manage and create diary/journal entries.
+
+*Licensing*
+
+dagboek.el is licensed under the GNU General Public License v3 or newer and is completely free software.
+
+
+** Installing
+
+This package is not (yet) available in popular Emacs repositories such as MELPA or ELPA. You can for example manually copy paste, use the ~:vc~ keyword, or using Elpaca:
+
+#+begin_src emacs-lisp
+  (use-package dagboek 
+    :ensure (:host codeberg :repo "jjba23/dagboek.el" :branch "trunk"))
+#+end_src
+
+** Using
+
+After installing, simply call ~M-x dagboek-today-entry~.
+
+There are some sane defaults configured, and all is customizable so you can override them with your own in your configuration.
+
+Check out [[./git-riddance.el][./dagboek.el]] for more details.
