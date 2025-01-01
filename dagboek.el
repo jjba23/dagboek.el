@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2024 Free Software Foundation, Inc.
 
-;; Version: 0.1.1
+;; Version: 0.1.2
 ;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;; URL: https://codeberg.org/jjba23/dagboek.el
@@ -111,12 +111,13 @@
         (message "creating today's dagboek entry...")
         (make-directory entry-dir t)
         (find-file entry-file)
-        (with-current-buffer (string-join (list (format-time-string dagboek-entry-format time) ".org") )
+        (with-current-buffer (string-trim (string-join (list (format-time-string dagboek-entry-format time) ".org") ))
           (progn
             (insert "#+title: ")
             (insert (format-time-string  dagboek-detailed-ts-format time))
             (insert "\n")
             (insert dagboek-questions-template)
+            (org-mode)
             ))))))
 
 (defun dagboek-today-entry ()
